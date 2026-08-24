@@ -1,0 +1,158 @@
+<!-- Header Navigation Bar -->
+<header class="bg-white border-b border-gray-100 sticky top-0 z-40 shadow-xs">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between h-16 items-center">
+      
+      <!-- Logo & Main Menu Links -->
+      <div class="flex items-center gap-8">
+        <!-- Logo -->
+        <a routerLink="/" class="flex items-center gap-2 text-indigo-700 hover:text-indigo-800 transition">
+          <!-- Sparkles Icon -->
+          <svg class="h-6 w-6 text-indigo-600 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+          </svg>
+          <span class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-indigo-700 to-indigo-500 bg-clip-text text-transparent">Harees Jewellery</span>
+        </a>
+
+        <!-- Main routes -->
+        <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-gray-600">
+          <a routerLink="/products" routerLinkActive="text-indigo-600" class="hover:text-indigo-600 transition">Products</a>
+          <a routerLink="/schemes" routerLinkActive="text-indigo-600" class="hover:text-indigo-600 transition">Gold Schemes</a>
+        </nav>
+      </div>
+
+      <!-- User Cart & Account Options -->
+      <div class="flex items-center gap-4">
+        
+        <!-- Wishlist -->
+        @if (isLoggedIn()) {
+          <a routerLink="/wishlist" class="relative p-2 text-gray-500 hover:text-red-500 transition" title="Wishlist">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+            @if (wishlistCount() > 0) {
+              <span class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 rounded-full text-2xs font-extrabold leading-none text-white bg-red-500">{{ wishlistCount() }}</span>
+            }
+          </a>
+
+          <!-- Shopping Cart -->
+          <a routerLink="/cart" class="relative p-2 text-gray-500 hover:text-indigo-600 transition" title="Shopping Cart">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+            @if (cartCount() > 0) {
+              <span class="absolute top-0 right-0 inline-flex items-center justify-center px-1.5 py-0.5 rounded-full text-2xs font-extrabold leading-none text-white bg-indigo-600">{{ cartCount() }}</span>
+            }
+          </a>
+        }
+
+        <!-- Profile / Auth link -->
+        <div class="flex items-center gap-2">
+          @if (isLoggedIn()) {
+            <a routerLink="/my-orders" class="text-sm font-semibold text-gray-700 hover:text-indigo-600 transition hidden sm:inline-block">My Orders</a>
+            <span class="text-gray-300 hidden sm:inline-block">|</span>
+            <a routerLink="/profile" class="text-sm font-semibold text-gray-700 hover:text-indigo-600 transition hidden sm:inline-block">Profile</a>
+            <button (click)="logout()" class="text-sm font-semibold text-red-600 hover:text-red-700 transition ml-2 border border-red-200 rounded-md px-3 py-1.5 bg-red-50">
+              Logout
+            </button>
+          } @else {
+            <a routerLink="/login" class="text-sm font-semibold text-gray-700 hover:text-indigo-600 transition">Sign In</a>
+            <a routerLink="/register" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-1.5 px-4 rounded-lg text-sm shadow-sm transition">Sign Up</a>
+          }
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</header>
+
+<!-- Main Router Outlet Wrapper -->
+<main class="min-h-screen bg-gray-50">
+  <router-outlet />
+</main>
+
+<!-- Footer -->
+<footer class="bg-white border-t border-gray-150 py-12 text-sm text-gray-500">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+    <div class="space-y-4">
+      <span class="font-extrabold text-gray-800 text-base">Harees Jewellery</span>
+      <p class="text-xs">Premium quality materials, custom savings schemes, and live gold rate tracking dashboards built for modern jewelry retail.</p>
+    </div>
+    <div>
+      <h4 class="font-bold text-gray-800 uppercase tracking-wider text-xs mb-3">Company</h4>
+      <ul class="space-y-2 text-xs">
+        <li><a routerLink="/products" class="hover:text-indigo-600">Products Catalog</a></li>
+        <li><a routerLink="/schemes" class="hover:text-indigo-600">Savings schemes</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="font-bold text-gray-800 uppercase tracking-wider text-xs mb-3">Support</h4>
+      <ul class="space-y-2 text-xs">
+        <li><a routerLink="/profile" class="hover:text-indigo-600">My Profile</a></li>
+        <li><a routerLink="/cart" class="hover:text-indigo-600">Shopping Cart</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="font-bold text-gray-800 uppercase tracking-wider text-xs mb-3">Legals</h4>
+      <ul class="space-y-2 text-xs">
+        <li><a class="hover:text-indigo-600 cursor-pointer">Terms & Conditions</a></li>
+        <li><a class="hover:text-indigo-600 cursor-pointer">Privacy Policy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-gray-100 pt-6 mt-8 text-center text-xs">
+    &copy; 2026 Harees Jewellery SaaS Platform. All rights reserved.
+  </div>
+</footer>
+
+<!-- Mobile Bottom Navigation Menu -->
+<div class="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white shadow-[0_-4px_10px_rgba(0,0,0,0.03)] border-t border-gray-100 px-4 py-3 flex justify-around items-center text-gray-400">
+  
+  <!-- Home -->
+  <a routerLink="/" routerLinkActive="text-indigo-950 scale-105" [routerLinkActiveOptions]="{exact: true}" class="flex flex-col items-center gap-1 transition-all duration-200">
+    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+    </svg>
+    <span class="uppercase tracking-wider font-bold text-[9px]">Home</span>
+  </a>
+
+  <!-- Products -->
+  <a routerLink="/products" routerLinkActive="text-indigo-950 scale-105" class="flex flex-col items-center gap-1 transition-all duration-200">
+    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+    </svg>
+    <span class="uppercase tracking-wider font-bold text-[9px]">Catalog</span>
+  </a>
+
+  <!-- Schemes -->
+  <a routerLink="/schemes" routerLinkActive="text-indigo-950 scale-105" class="flex flex-col items-center gap-1 transition-all duration-200">
+    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M12 16v1" />
+    </svg>
+    <span class="uppercase tracking-wider font-bold text-[9px]">Schemes</span>
+  </a>
+
+  <!-- Wishlist -->
+  <a routerLink="/wishlist" routerLinkActive="text-indigo-950 scale-105" class="flex flex-col items-center gap-1 transition-all duration-200 relative">
+    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+    </svg>
+    @if (wishlistCount() > 0) {
+      <span class="absolute -top-1.5 -right-1.5 bg-amber-400 text-indigo-950 font-black rounded-full w-4 h-4 flex items-center justify-center text-[9px]">{{ wishlistCount() }}</span>
+    }
+    <span class="uppercase tracking-wider font-bold text-[9px]">Wishlist</span>
+  </a>
+
+  <!-- Cart -->
+  <a routerLink="/cart" routerLinkActive="text-indigo-950 scale-105" class="flex flex-col items-center gap-1 transition-all duration-200 relative">
+    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+    </svg>
+    @if (cartCount() > 0) {
+      <span class="absolute -top-1.5 -right-1.5 bg-amber-400 text-indigo-950 font-black rounded-full w-4 h-4 flex items-center justify-center text-[9px]">{{ cartCount() }}</span>
+    }
+    <span class="uppercase tracking-wider font-bold text-[9px]">Cart</span>
+  </a>
+
+</div>

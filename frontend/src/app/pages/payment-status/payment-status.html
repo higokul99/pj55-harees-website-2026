@@ -1,0 +1,78 @@
+<div class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl border border-gray-150 text-center space-y-6">
+    
+    @if (isLoading()) {
+      <div class="py-12 flex flex-col items-center">
+        <span class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></span>
+        <p class="text-sm text-gray-500 mt-4">Verifying transaction status...</p>
+      </div>
+    } @else if (errorMessage()) {
+      <div class="py-12 space-y-4">
+        <!-- Error Icon -->
+        <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 text-red-600">
+          <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-900">Verification Error</h2>
+        <p class="text-sm text-gray-500">{{ errorMessage() }}</p>
+        <div class="pt-4">
+          <a routerLink="/products" class="text-indigo-600 font-semibold hover:text-indigo-500">Go back to shopping</a>
+        </div>
+      </div>
+    } @else {
+      <!-- Success / Failure Display -->
+      @if (orderData()?.payment_status === 'completed') {
+        <div class="space-y-4">
+          <!-- Checkmark Icon -->
+          <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 text-green-600">
+            <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h2 class="text-2xl font-extrabold text-gray-900">Payment Successful!</h2>
+          <p class="text-sm text-gray-500">Thank you for your purchase. Your order has been placed successfully and is now being processed.</p>
+        </div>
+      } @else {
+        <div class="space-y-4">
+          <!-- Cross Icon -->
+          <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-red-100 text-red-600">
+            <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </div>
+          <h2 class="text-2xl font-extrabold text-gray-900">Payment Failed</h2>
+          <p class="text-sm text-gray-500">Your transaction could not be processed. Please check your payment method and try again.</p>
+        </div>
+      }
+
+      <!-- Order Details Summary -->
+      <div class="bg-gray-50 border border-gray-100 p-4 rounded-xl space-y-2 text-sm text-gray-700 text-left">
+        <div class="flex justify-between">
+          <span class="text-gray-400">Order ID:</span>
+          <span class="font-bold text-gray-800">#{{ orderData()?.order_id }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-400">Txn ID:</span>
+          <span class="font-mono text-gray-800">{{ orderData()?.merchant_order_id }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-400">Amount Paid:</span>
+          <span class="font-bold text-gray-900">₹{{ orderData()?.final_amount | number:'1.2-2' }}</span>
+        </div>
+      </div>
+
+      <!-- Action Actions -->
+      <div class="pt-4 space-y-3">
+        <a routerLink="/products" class="w-full inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg text-sm transition">
+          Continue Shopping
+        </a>
+        
+        <a routerLink="/my-orders" class="w-full inline-block bg-gray-50 hover:bg-gray-100 text-gray-700 font-semibold py-2.5 rounded-lg text-sm border border-gray-200 transition">
+          View My Orders
+        </a>
+      </div>
+    }
+
+  </div>
+</div>

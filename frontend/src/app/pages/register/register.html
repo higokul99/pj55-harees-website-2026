@@ -1,0 +1,165 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-2xl w-full space-y-8 bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+    <div class="text-center">
+      <h2 class="text-3xl font-extrabold text-gray-900">Create your account</h2>
+      <p class="mt-2 text-sm text-gray-600">
+        Already have an account?
+        <a routerLink="/login" class="font-medium text-indigo-600 hover:text-indigo-500">
+          Sign in
+        </a>
+      </p>
+    </div>
+
+    @if (errorMessage()) {
+      <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-md">
+        <p class="text-sm text-red-700">{{ errorMessage() }}</p>
+      </div>
+    }
+
+    @if (successMessage()) {
+      <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-md">
+        <p class="text-sm text-green-700">{{ successMessage() }}</p>
+      </div>
+    }
+
+    <form class="mt-8 space-y-6" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <!-- Section 1: Personal Info -->
+      <div class="border-b border-gray-200 pb-5">
+        <h3 class="text-lg font-medium text-gray-900">Personal Details</h3>
+        <div class="mt-4 grid grid-cols-1 gap-y-4 gap-x-4 sm:grid-cols-2">
+          <div>
+            <label for="fullname" class="block text-sm font-medium text-gray-700">Full Name</label>
+            <input id="fullname" type="text" formControlName="fullname" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            @if (registerForm.get('fullname')?.touched && registerForm.get('fullname')?.invalid) {
+              <span class="text-xs text-red-500 mt-1 block">Full name is required (max 100 chars).</span>
+            }
+          </div>
+
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+            <input id="email" type="email" formControlName="email" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            @if (registerForm.get('email')?.touched && registerForm.get('email')?.invalid) {
+              <span class="text-xs text-red-500 mt-1 block">A valid email is required.</span>
+            }
+          </div>
+
+          <div>
+            <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+            <input id="phone" type="text" formControlName="phone" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="10-15 digit number" />
+            @if (registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid) {
+              <span class="text-xs text-red-500 mt-1 block">10 to 15 digit number is required.</span>
+            }
+          </div>
+
+          <div>
+            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+            <input id="password" type="password" formControlName="password" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            @if (registerForm.get('password')?.touched && registerForm.get('password')?.invalid) {
+              <span class="text-xs text-red-500 mt-1 block">Password must be at least 6 characters.</span>
+            }
+          </div>
+
+          <div>
+            <label for="dob" class="block text-sm font-medium text-gray-700">Date of Birth</label>
+            <input id="dob" type="date" formControlName="dob" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+          </div>
+
+          <div>
+            <label for="anniversary" class="block text-sm font-medium text-gray-700">Anniversary Date (Optional)</label>
+            <input id="anniversary" type="date" formControlName="anniversary" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Security Credentials -->
+      <div class="border-b border-gray-200 pb-5">
+        <h3 class="text-lg font-medium text-gray-900">Security Details (For Password Reset)</h3>
+        <div class="mt-4 grid grid-cols-1 gap-y-4 gap-x-4 sm:grid-cols-2">
+          <div>
+            <label for="security_question" class="block text-sm font-medium text-gray-700">Security Question</label>
+            <select id="security_question" formControlName="security_question" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white">
+              <option value="" disabled>Select a question</option>
+              @for (question of securityQuestions; track question) {
+                <option [value]="question">{{ question }}</option>
+              }
+            </select>
+            @if (registerForm.get('security_question')?.touched && registerForm.get('security_question')?.invalid) {
+              <span class="text-xs text-red-500 mt-1 block">Security question is required.</span>
+            }
+          </div>
+
+          <div>
+            <label for="security_answer" class="block text-sm font-medium text-gray-700">Security Answer</label>
+            <input id="security_answer" type="text" formControlName="security_answer" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            @if (registerForm.get('security_answer')?.touched && registerForm.get('security_answer')?.invalid) {
+              <span class="text-xs text-red-500 mt-1 block">Security answer is required.</span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Address Info -->
+      <div>
+        <h3 class="text-lg font-medium text-gray-900">Address Details</h3>
+        <div class="mt-4 grid grid-cols-1 gap-y-4 gap-x-4 sm:grid-cols-2">
+          <div class="sm:col-span-2">
+            <label for="address1" class="block text-sm font-medium text-gray-700">Address Line 1</label>
+            <input id="address1" type="text" formControlName="address1" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            @if (registerForm.get('address1')?.touched && registerForm.get('address1')?.invalid) {
+              <span class="text-xs text-red-500 mt-1 block">Address line 1 is required.</span>
+            }
+          </div>
+
+          <div class="sm:col-span-2">
+            <label for="address2" class="block text-sm font-medium text-gray-700">Address Line 2 (Optional)</label>
+            <input id="address2" type="text" formControlName="address2" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+          </div>
+
+          <div>
+            <label for="city" class="block text-sm font-medium text-gray-700">City</label>
+            <input id="city" type="text" formControlName="city" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            @if (registerForm.get('city')?.touched && registerForm.get('city')?.invalid) {
+              <span class="text-xs text-red-500 mt-1 block">City is required.</span>
+            }
+          </div>
+
+          <div>
+            <label for="state" class="block text-sm font-medium text-gray-700">State</label>
+            <input id="state" type="text" formControlName="state" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            @if (registerForm.get('state')?.touched && registerForm.get('state')?.invalid) {
+              <span class="text-xs text-red-500 mt-1 block">State is required.</span>
+            }
+          </div>
+
+          <div>
+            <label for="pincode" class="block text-sm font-medium text-gray-700">Pincode</label>
+            <input id="pincode" type="text" formControlName="pincode" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+            @if (registerForm.get('pincode')?.touched && registerForm.get('pincode')?.invalid) {
+              <span class="text-xs text-red-500 mt-1 block">Pincode is required.</span>
+            }
+          </div>
+
+          <div>
+            <label for="landmark" class="block text-sm font-medium text-gray-700">Landmark (Optional)</label>
+            <input id="landmark" type="text" formControlName="landmark" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <button
+          type="submit"
+          [disabled]="isLoading() || registerForm.invalid"
+          class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+        >
+          @if (isLoading()) {
+            <span class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
+            Registering...
+          } @else {
+            Register
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

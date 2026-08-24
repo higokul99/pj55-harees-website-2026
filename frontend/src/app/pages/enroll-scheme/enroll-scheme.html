@@ -1,0 +1,63 @@
+<div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-5xl mx-auto">
+    <!-- Breadcrumb -->
+    <nav class="flex mb-6 text-sm text-gray-500 font-medium">
+      <a routerLink="/schemes" class="hover:text-indigo-600">Schemes</a>
+      <span class="mx-2">/</span>
+      <span class="text-gray-900">Enrollment</span>
+    </nav>
+
+    <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Available Gold Schemes</h1>
+    <p class="text-sm text-gray-500 mb-8">Save systematically for 11 months, and Harees Jewellery will pay your 12th installment as a bonus!</p>
+
+    @if (errorMessage()) {
+      <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-md mb-6">
+        <p class="text-sm text-red-700">{{ errorMessage() }}</p>
+      </div>
+    }
+
+    @if (isLoading()) {
+      <div class="flex justify-center items-center py-24">
+        <span class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></span>
+      </div>
+    } @else {
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        @for (plan of plans(); track plan.id) {
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-250 p-6 flex flex-col justify-between hover:shadow-md transition">
+            <div>
+              <div class="flex justify-between items-center">
+                <h3 class="text-lg font-bold text-gray-800">{{ plan.scheme_name }}</h3>
+                <span class="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full font-mono uppercase font-bold">{{ plan.scheme_code }}</span>
+              </div>
+              <p class="text-xs text-gray-400 mt-1">11 Months Installment Plan</p>
+
+              <!-- Values -->
+              <div class="space-y-3 my-6 text-sm">
+                <div class="flex justify-between">
+                  <span class="text-gray-500">Monthly Installment</span>
+                  <span class="font-bold text-gray-900">₹{{ plan.monthly_installment }}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-500">Company Bonus (1 Month)</span>
+                  <span class="font-bold text-green-600">+₹{{ plan.bonus_amount }}</span>
+                </div>
+                <div class="flex justify-between border-t border-gray-100 pt-3 text-base">
+                  <span class="text-gray-900 font-semibold">Total Maturity Value</span>
+                  <span class="font-extrabold text-indigo-700">₹{{ plan.final_value }}</span>
+                </div>
+              </div>
+            </div>
+
+            <button
+              (click)="enrollInScheme(plan)"
+              [disabled]="isSubmitting()"
+              class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg text-sm shadow-sm transition disabled:opacity-50"
+            >
+              Enroll Now
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

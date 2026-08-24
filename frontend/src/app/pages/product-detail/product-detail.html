@@ -1,0 +1,158 @@
+<div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Breadcrumb -->
+    <nav class="flex mb-6 text-sm text-gray-500 font-medium">
+      <a routerLink="/products" class="hover:text-indigo-600">Products</a>
+      <span class="mx-2">/</span>
+      <span class="text-gray-900">{{ product()?.name }}</span>
+    </nav>
+
+    @if (isLoading()) {
+      <div class="flex justify-center items-center py-24">
+        <span class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></span>
+      </div>
+    } @else if (errorMessage()) {
+      <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-md text-red-700 text-center py-12 max-w-lg mx-auto shadow-sm">
+        {{ errorMessage() }}
+        <div class="mt-4">
+          <a routerLink="/products" class="text-indigo-600 font-semibold underline hover:text-indigo-500">Back to Products</a>
+        </div>
+      </div>
+    } @else {
+      <!-- Product Showcase Grid -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-10 grid grid-cols-1 lg:grid-cols-2 gap-10">
+        
+        <!-- Left: Image Gallery -->
+        <div class="space-y-4">
+          <div class="w-full aspect-w-1 aspect-h-1 bg-gray-100 rounded-xl overflow-hidden h-96 flex items-center justify-center">
+            @if (selectedImage()) {
+              <img [src]="selectedImage()?.image_path" [alt]="selectedImage()?.alt_text" class="w-full h-full object-center object-cover" />
+            } @else {
+              <div class="w-full h-full flex items-center justify-center bg-indigo-50 text-indigo-300">
+                <svg class="h-24 w-24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+            }
+          </div>
+
+          <!-- Thumbnails -->
+          @if ((product()?.images?.length || 0) > 1) {
+            <div class="flex gap-2 overflow-x-auto py-1">
+              @for (img of product()?.images; track img.id) {
+                <button
+                  (click)="changeImage(img)"
+                  [class.border-indigo-600]="selectedImage()?.id === img.id"
+                  [class.border-gray-200]="selectedImage()?.id !== img.id"
+                  class="w-20 h-20 border-2 rounded-lg overflow-hidden flex-shrink-0 bg-gray-50 hover:border-indigo-500 transition focus:outline-none"
+                >
+                  <img [src]="img.image_path" [alt]="img.alt_text" class="w-full h-full object-cover" />
+                </button>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Right: Specifications and Pricing -->
+        <div class="flex flex-col justify-between">
+          <div>
+            <span class="text-sm font-semibold uppercase tracking-wider text-indigo-600">{{ product()?.category_details?.name }}</span>
+            <h1 class="text-3xl font-extrabold text-gray-900 mt-2">{{ product()?.name }}</h1>
+            <p class="text-sm text-gray-500 mt-1">Code: {{ product()?.product_code }} | SKU: {{ product()?.sku }}</p>
+
+            <div class="text-2xl font-bold text-gray-900 mt-4">₹{{ product()?.price || '0.00' }}</div>
+
+            <!-- Description -->
+            <div class="mt-6 border-t border-gray-100 pt-6">
+              <h3 class="text-sm font-semibold text-gray-900">Description</h3>
+              <p class="text-gray-600 text-sm mt-2 leading-relaxed">{{ product()?.description || 'No description provided.' }}</p>
+            </div>
+
+            <!-- Specifications Tables -->
+            <div class="mt-8 border-t border-gray-100 pt-6 space-y-6">
+              <h3 class="text-sm font-semibold text-gray-900">Product Specifications</h3>
+              
+              <!-- Physical Specs -->
+              <div class="grid grid-cols-2 gap-y-2 text-sm border border-gray-100 p-4 rounded-xl bg-gray-50">
+                <span class="text-gray-500">Gender</span>
+                <span class="font-medium text-gray-900">{{ product()?.gender }}</span>
+                
+                <span class="text-gray-500">Metal Purity</span>
+                <span class="font-medium text-gray-900">{{ product()?.purity_details?.name || 'N/A' }}</span>
+                
+                <span class="text-gray-500">Gross Weight</span>
+                <span class="font-medium text-gray-900">{{ product()?.gross_weight }} g</span>
+
+                @if (product()?.net_weight) {
+                  <span class="text-gray-500">Net Weight</span>
+                  <span class="font-medium text-gray-900">{{ product()?.net_weight }} g</span>
+                }
+                
+                @if (product()?.size) {
+                  <span class="text-gray-500">Size</span>
+                  <span class="font-medium text-gray-900">{{ product()?.size }}</span>
+                }
+              </div>
+
+              <!-- Stone Details -->
+              @if (product()?.stone_available) {
+                <div class="border border-gray-100 p-4 rounded-xl bg-gray-50">
+                  <h4 class="text-xs font-bold uppercase text-gray-400 tracking-wider mb-2">Stone Information</h4>
+                  <div class="grid grid-cols-2 gap-y-2 text-sm">
+                    <span class="text-gray-500">Description</span>
+                    <span class="font-medium text-gray-900">{{ product()?.stone_desc }}</span>
+                    <span class="text-gray-500">Color / Shape</span>
+                    <span class="font-medium text-gray-900">{{ product()?.stone_color }} / {{ product()?.stone_shape }}</span>
+                    <span class="text-gray-500">Count / Weight</span>
+                    <span class="font-medium text-gray-900">{{ product()?.stone_count }} pcs / {{ product()?.stone_weight }} g</span>
+                  </div>
+                </div>
+              }
+
+              <!-- Diamond Details -->
+              @if (product()?.diamond_available) {
+                <div class="border border-gray-100 p-4 rounded-xl bg-gray-50">
+                  <h4 class="text-xs font-bold uppercase text-gray-400 tracking-wider mb-2">Diamond Details</h4>
+                  <div class="grid grid-cols-2 gap-y-2 text-sm">
+                    <span class="text-gray-500">Clarify / Cut</span>
+                    <span class="font-medium text-gray-900">{{ product()?.dia_clarity }} / {{ product()?.dia_cut }}</span>
+                    <span class="text-gray-500">Color / Shape</span>
+                    <span class="font-medium text-gray-900">{{ product()?.dia_color }} / {{ product()?.dia_shape }}</span>
+                    <span class="text-gray-500">Weight (Carats) / Count</span>
+                    <span class="font-medium text-gray-900">{{ product()?.dia_cent }} ct / {{ product()?.dia_count }} pcs</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Quantity Selector and Action Buttons -->
+          <div class="mt-8 border-t border-gray-100 pt-6 space-y-4">
+            <div class="flex items-center gap-4 text-sm font-semibold text-gray-700">
+              <span>Select Quantity:</span>
+              <div class="flex items-center border border-gray-300 rounded-md bg-gray-50">
+                <button type="button" (click)="decrementQuantity()" class="px-2.5 py-1 text-gray-600 hover:bg-gray-200 rounded-l-md font-bold transition focus:outline-none">-</button>
+                <span class="px-4 py-1 text-gray-900 font-bold">{{ quantity() }}</span>
+                <button type="button" (click)="incrementQuantity()" class="px-2.5 py-1 text-gray-600 hover:bg-gray-200 rounded-r-md font-bold transition focus:outline-none">+</button>
+              </div>
+            </div>
+            
+            <div class="flex gap-4">
+              <button (click)="addToCart()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl shadow-sm hover:shadow transition focus:outline-none">
+                Add to Cart
+              </button>
+              <button (click)="toggleWishlist()" class="bg-gray-50 hover:bg-gray-100 border border-gray-200 px-6 rounded-xl flex items-center justify-center text-gray-400 hover:text-red-500 transition" title="Add to Wishlist">
+                <!-- Heart icon -->
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    }
+  </div>
+</div>

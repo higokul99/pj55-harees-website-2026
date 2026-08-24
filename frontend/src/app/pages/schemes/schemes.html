@@ -1,0 +1,160 @@
+<div class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-5xl mx-auto">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+      <div>
+        <h1 class="text-3xl font-extrabold text-gray-900">Gold Savings Schemes</h1>
+        <p class="text-sm text-gray-500 mt-1">Participated: {{ completedCount() }} Completed | {{ mySchemes().length }} Total</p>
+      </div>
+      <a routerLink="/enroll-scheme" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg text-sm shadow-sm transition">
+        Enroll in New Scheme
+      </a>
+    </div>
+
+    <!-- Active Schemes Listing -->
+    @if (isLoading()) {
+      <div class="flex justify-center items-center py-24">
+        <span class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></span>
+      </div>
+    } @else {
+      @if (mySchemes().length === 0) {
+        <div class="text-center py-20 bg-white rounded-xl shadow-sm border border-gray-100">
+          <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h3 class="mt-4 text-lg font-medium text-gray-900">No active savings plan</h3>
+          <p class="mt-2 text-sm text-gray-500">Systematically save monthly installments and earn attractive bonuses on maturity!</p>
+          <div class="mt-6">
+            <a routerLink="/enroll-scheme" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none">
+              Enroll in a Plan
+            </a>
+          </div>
+        </div>
+      } @else {
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          @for (scheme of mySchemes(); track scheme.id) {
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex flex-col justify-between">
+              <div>
+                <div class="flex justify-between items-start">
+                  <div>
+                    <h3 class="text-lg font-bold text-gray-800">{{ scheme.scheme_name }}</h3>
+                    <span class="text-xs font-semibold px-2.5 py-0.5 mt-1 inline-block rounded-full uppercase tracking-wider" 
+                          [class.bg-green-50]="scheme.status === 'active'" [class.text-green-700]="scheme.status === 'active'"
+                          [class.bg-gray-100]="scheme.status === 'completed'" [class.text-gray-600]="scheme.status === 'completed'">
+                      {{ scheme.status }}
+                    </span>
+                  </div>
+                  <span class="text-sm font-mono text-gray-400 font-bold bg-gray-50 px-2 py-1 rounded">{{ scheme.code }}</span>
+                </div>
+
+                <!-- Metrics -->
+                <div class="grid grid-cols-3 gap-2 border-t border-b border-gray-100 py-4 my-4 text-center">
+                  <div>
+                    <span class="block text-xs text-gray-400 font-semibold uppercase">Installment</span>
+                    <span class="text-sm font-bold text-gray-800">₹{{ scheme.monthly_amount }}</span>
+                  </div>
+                  <div>
+                    <span class="block text-xs text-gray-400 font-semibold uppercase">Completed</span>
+                    <span class="text-sm font-bold text-gray-800">{{ scheme.months_completed }} / 11 mos</span>
+                  </div>
+                  <div>
+                    <span class="block text-xs text-gray-400 font-semibold uppercase">Bonus Value</span>
+                    <span class="text-sm font-bold text-indigo-600">₹{{ scheme.bonus_amount }}</span>
+                  </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-full bg-gray-100 rounded-full h-2 mb-4">
+                  <div class="bg-indigo-600 h-2 rounded-full" [style.width.%]="(scheme.months_completed / 11) * 100"></div>
+                </div>
+              </div>
+
+              <!-- Action buttons -->
+              <div class="flex gap-2">
+                @if (scheme.status === 'active') {
+                  <button 
+                    (click)="payInstallment(scheme)" 
+                    [disabled]="isPaying() || !scheme.payment_pending"
+                    class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg text-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    @if (scheme.payment_pending) {
+                      Pay Installment
+                    } @else {
+                      Paid This Month
+                    }
+                  </button>
+                }
+                <button (click)="viewPassbook(scheme)" class="flex-1 bg-gray-50 hover:bg-gray-100 text-gray-700 font-semibold py-2 rounded-lg text-sm border border-gray-200 transition">
+                  View Passbook
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+
+    <!-- Passbook Modal Backdrop -->
+    @if (viewPassbookData()) {
+      <div class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+          <div class="bg-indigo-700 p-6 text-white flex justify-between items-center">
+            <div>
+              <h3 class="text-lg font-bold">Scheme Passbook Summary</h3>
+              <p class="text-xs text-indigo-200">Account No: {{ viewPassbookData()?.scheme?.code }}</p>
+            </div>
+            <button (click)="closePassbook()" class="text-white hover:text-indigo-200 font-bold focus:outline-none">&times;</button>
+          </div>
+
+          <div class="p-6 space-y-6">
+            <!-- Summary stats -->
+            <div class="grid grid-cols-3 gap-2 bg-gray-50 border border-gray-150 p-4 rounded-xl text-center text-xs">
+              <div>
+                <span class="text-gray-400 uppercase font-semibold">Total Paid</span>
+                <span class="block text-sm font-bold text-gray-800 mt-1">₹{{ viewPassbookData()?.total_paid }}</span>
+              </div>
+              <div>
+                <span class="text-gray-400 uppercase font-semibold">Bonus Earned</span>
+                <span class="block text-sm font-bold text-green-600 mt-1">+₹{{ viewPassbookData()?.bonus }}</span>
+              </div>
+              <div>
+                <span class="text-gray-400 uppercase font-semibold">Maturity Value</span>
+                <span class="block text-sm font-extrabold text-indigo-700 mt-1">₹{{ viewPassbookData()?.final_value }}</span>
+              </div>
+            </div>
+
+            <!-- Installments paid list -->
+            <div>
+              <h4 class="text-sm font-bold text-gray-800 mb-3">Installment Logs</h4>
+              <div class="max-h-48 overflow-y-auto border border-gray-200 rounded-lg text-sm divide-y divide-gray-100">
+                @if (viewPassbookData()?.payments?.length === 0) {
+                  <p class="p-4 text-center text-gray-400">No installments logged yet.</p>
+                } @else {
+                  @for (pay of viewPassbookData()?.payments; track pay.id; let idx = $index) {
+                    <div class="p-3 flex justify-between items-center">
+                      <div>
+                        <span class="font-bold text-gray-700">Installment {{ idx + 1 }}</span>
+                        <span class="block text-xs text-gray-400 mt-0.5">Receipt: {{ pay.receipt_no }}</span>
+                      </div>
+                      <div class="text-right">
+                        <span class="font-bold text-gray-800">₹{{ pay.amount }}</span>
+                        <span class="block text-xs text-gray-400 mt-0.5">{{ pay.payment_date | date:'mediumDate' }}</span>
+                      </div>
+                    </div>
+                  }
+                }
+              </div>
+            </div>
+          </div>
+
+          <div class="p-6 bg-gray-50 border-t border-gray-100 flex justify-end gap-2">
+            <button (click)="closePassbook()" class="bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 font-semibold px-4 py-2 rounded-lg text-sm transition">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+  </div>
+</div>
